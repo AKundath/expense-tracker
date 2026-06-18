@@ -1,3 +1,5 @@
+const inputClass = "bg-white/10 border border-white/15 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 backdrop-blur-sm appearance-none"
+
 export default function FilterBar({ categories, filter, onChange }) {
   function handleChange(e) {
     onChange(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -9,11 +11,11 @@ export default function FilterBar({ categories, filter, onChange }) {
         name="category"
         value={filter.category}
         onChange={handleChange}
-        className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+        className={inputClass}
       >
-        <option value="All">All categories</option>
+        <option value="All" className="bg-gray-900">All categories</option>
         {categories.map(cat => (
-          <option key={cat} value={cat}>{cat}</option>
+          <option key={cat} value={cat} className="bg-gray-900">{cat}</option>
         ))}
       </select>
 
@@ -22,13 +24,13 @@ export default function FilterBar({ categories, filter, onChange }) {
         name="month"
         value={filter.month}
         onChange={handleChange}
-        className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 [color-scheme:dark]"
+        className={`${inputClass} [color-scheme:dark]`}
       />
 
       {(filter.category !== 'All' || filter.month) && (
         <button
           onClick={() => onChange({ category: 'All', month: '' })}
-          className="text-xs text-gray-400 hover:text-white border border-gray-700 rounded-lg px-3 py-2 transition-colors"
+          className="text-xs text-white/50 hover:text-white border border-white/15 rounded-lg px-3 py-2 transition-colors backdrop-blur-sm bg-white/5"
         >
           Clear filters
         </button>

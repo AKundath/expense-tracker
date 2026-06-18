@@ -1,8 +1,15 @@
-const CATEGORY_COLORS = {
-  Food: 'bg-orange-500',
-  Travel: 'bg-blue-500',
-  'Basic Needs': 'bg-green-500',
-  Pleasure: 'bg-pink-500',
+const CATEGORY_BADGE = {
+  Food: 'bg-orange-500/20 text-orange-300',
+  Travel: 'bg-blue-500/20 text-blue-300',
+  'Basic Needs': 'bg-green-500/20 text-green-300',
+  Pleasure: 'bg-pink-500/20 text-pink-300',
+}
+
+const CATEGORY_DOT = {
+  Food: 'bg-orange-400',
+  Travel: 'bg-blue-400',
+  'Basic Needs': 'bg-green-400',
+  Pleasure: 'bg-pink-400',
 }
 
 export default function Summary({ expenses }) {
@@ -14,8 +21,8 @@ export default function Summary({ expenses }) {
   }, {})
 
   return (
-    <div className="bg-gray-900 rounded-2xl border border-gray-800 p-5">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Spent</p>
+    <div className="rounded-2xl p-5">
+      <p className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-1">Total Spent</p>
       <p className="text-4xl font-bold text-white mb-4">
         ₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
       </p>
@@ -26,12 +33,12 @@ export default function Summary({ expenses }) {
             .sort((a, b) => b[1] - a[1])
             .map(([cat, amt]) => (
               <div key={cat} className="flex items-center gap-3">
-                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${CATEGORY_COLORS[cat] ?? 'bg-gray-500'}`} />
-                <span className="text-sm text-gray-300 flex-1">{cat}</span>
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${CATEGORY_DOT[cat] ?? 'bg-gray-400'}`} />
+                <span className="text-sm text-white/70 flex-1">{cat}</span>
                 <span className="text-sm font-medium text-white">
                   ₹{amt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
-                <span className="text-xs text-gray-500 w-10 text-right">
+                <span className="text-xs text-white/40 w-10 text-right">
                   {total > 0 ? Math.round((amt / total) * 100) : 0}%
                 </span>
               </div>
@@ -40,7 +47,7 @@ export default function Summary({ expenses }) {
       )}
 
       {expenses.length === 0 && (
-        <p className="text-gray-600 text-sm">No expenses yet.</p>
+        <p className="text-white/30 text-sm">No expenses yet.</p>
       )}
     </div>
   )
