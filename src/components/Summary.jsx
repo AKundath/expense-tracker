@@ -38,9 +38,6 @@ export default function Summary({ expenses }) {
                 <span className="text-sm font-medium text-white">
                   ₹{amt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
-                <span className="text-xs text-white/40 w-10 text-right">
-                  {total > 0 ? Math.round((amt / total) * 100) : 0}%
-                </span>
               </div>
             ))}
         </div>
