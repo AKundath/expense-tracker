@@ -59,15 +59,14 @@ export default function App() {
               <ExpenseForm categories={CATEGORIES} onAdd={addExpense} />
             </div>
 
-            {/* Right: Pie Chart + Today Widget */}
-            <div className="self-start space-y-4">
+            {/* Right: Pie Chart only — static square */}
+            <div className="self-start">
               <PieChart expenses={filtered} />
-              <TodayWidget expenses={expenses} />
             </div>
 
           </div>
 
-          {/* Bottom: FilterBar + Transactions — aligned with center column */}
+          {/* Bottom: Clock | FilterBar+Transactions | TodayWidget */}
           <div className="grid grid-cols-[1fr_2fr_1fr] gap-4">
             <div className="self-start">
               <ClockWidget />
@@ -76,7 +75,9 @@ export default function App() {
               <FilterBar categories={CATEGORIES} filter={filter} onChange={setFilter} />
               <ExpenseList expenses={filtered} onDelete={deleteExpense} />
             </div>
-            <div />
+            <div className="self-start">
+              <TodayWidget expenses={expenses} />
+            </div>
           </div>
 
         </main>

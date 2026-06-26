@@ -59,7 +59,7 @@ export default function ExpenseList({ expenses, onDelete }) {
         ✦ Transactions ✦
       </h2>
 
-      <ul className="space-y-2">
+      <ul className="space-y-2 max-h-[532px] overflow-y-auto custom-scroll pr-1">
         {expenses.map(expense => (
           <li
             key={expense.id}
