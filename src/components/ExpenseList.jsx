@@ -78,7 +78,14 @@ export default function ExpenseList({ expenses, onDelete }) {
                   <span className="text-sm text-white/80 truncate">{expense.description}</span>
                 )}
               </div>
-              <p className="text-xs text-white/35 mt-0.5">{formatDate(expense.date)}</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-xs text-white/35">{formatDate(expense.date)}</p>
+                {expense.bank && (
+                  <span className="text-xs text-white/30 border border-white/15 rounded px-1.5 py-0">
+                    {expense.bank}
+                  </span>
+                )}
+              </div>
             </div>
 
             <span className="font-semibold text-white whitespace-nowrap">

@@ -1,11 +1,92 @@
-import { useState } from 'react'
-import { PlusCircle } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { PlusCircle, Landmark, ChevronDown } from 'lucide-react'
 
 const today = () => new Date().toISOString().split('T')[0]
-
-const EMPTY = { amount: '', category: '', description: '', date: today() }
+const EMPTY = { amount: '', category: '', description: '', date: today(), bank: '' }
 
 const inputClass = "bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/25 focus:outline-none focus:ring-1 focus:ring-blue-400/60 focus:border-blue-400/40 backdrop-blur-sm transition-all"
+
+const BANKS = [
+  { value: 'HDFC', label: 'HDFC Bank', color: '#ef4444' },
+  { value: 'SBI',  label: 'State Bank of India', color: '#3b82f6' },
+]
+
+const categoryNeon = {
+  borderRadius: '0.5rem',
+  border: '1.5px solid rgba(99, 102, 241, 0.8)',
+  boxShadow: '0 0 6px rgba(99, 102, 241, 0.6), 0 0 18px rgba(99, 102, 241, 0.25)',
+}
+
+const bankNeon = {
+  borderRadius: '0.5rem',
+  border: '1.5px solid rgba(245, 158, 11, 0.8)',
+  boxShadow: '0 0 6px rgba(245, 158, 11, 0.6), 0 0 18px rgba(245, 158, 11, 0.25)',
+}
+
+function BankSelect({ value, onChange }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const selected = BANKS.find(b => b.value === value)
+
+  useEffect(() => {
+    function onClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    return () => document.removeEventListener('mousedown', onClickOutside)
+  }, [])
+
+  return (
+    <div ref={ref} className="relative">
+      {/* Trigger */}
+      <div
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-2 w-full bg-white/5 backdrop-blur-sm px-3 py-2 cursor-pointer"
+        style={bankNeon}
+      >
+        {selected ? (
+          <Landmark size={14} style={{ color: selected.color, filter: `drop-shadow(0 0 4px ${selected.color})` }} />
+        ) : (
+          <Landmark size={14} className="text-white/25" />
+        )}
+        <span className={`flex-1 text-sm ${selected ? 'text-white' : 'text-white/30'}`}>
+          {selected ? selected.label : 'Select…'}
+        </span>
+        <ChevronDown
+          size={14}
+          className="text-white/40 transition-transform duration-200"
+          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+        />
+      </div>
+
+      {/* Dropdown list */}
+      {open && (
+        <div
+          className="absolute top-full left-0 right-0 mt-1 z-50 rounded-lg overflow-hidden"
+          style={{
+            background: 'rgba(8, 8, 12, 0.97)',
+            border: '1.5px solid rgba(245, 158, 11, 0.7)',
+            boxShadow: '0 0 10px rgba(245, 158, 11, 0.4), 0 8px 24px rgba(0,0,0,0.6)',
+          }}
+        >
+          {BANKS.map(bank => (
+            <div
+              key={bank.value}
+              onClick={() => { onChange(bank.value); setOpen(false) }}
+              className={`flex items-center gap-2.5 px-3 py-2.5 cursor-pointer transition-colors hover:bg-white/10 ${value === bank.value ? 'bg-white/5' : ''}`}
+            >
+              <Landmark
+                size={14}
+                style={{ color: bank.color, filter: `drop-shadow(0 0 4px ${bank.color})` }}
+              />
+              <span className="text-sm text-white/80">{bank.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function ExpenseForm({ categories, onAdd }) {
   const [form, setForm] = useState(EMPTY)
@@ -50,7 +131,6 @@ export default function ExpenseForm({ categories, onAdd }) {
         `,
       }}
     >
-      {/* Neon sign header */}
       <h2
         className="text-sm font-bold uppercase tracking-widest mb-4"
         style={{
@@ -79,32 +159,28 @@ export default function ExpenseForm({ categories, onAdd }) {
 
           <div className="flex flex-col gap-1">
             <label className="text-xs text-white/40 tracking-wide">Category</label>
-            <select
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              className={`${inputClass} appearance-none`}
-            >
-              <option value="" disabled className="bg-gray-900">Select…</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat} className="bg-gray-900">{cat}</option>
-              ))}
-            </select>
+            <div style={categoryNeon}>
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                className="w-full bg-white/5 backdrop-blur-sm px-3 py-2 text-white focus:outline-none appearance-none border-0 rounded-lg"
+              >
+                <option value="" disabled className="bg-gray-900">Select…</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat} className="bg-gray-900">{cat}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-white/40 tracking-wide">
-              Description <span className="text-white/20">(optional)</span>
-            </label>
-            <input
-              type="text"
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="e.g. Lunch, Uber"
-              className={inputClass}
+            <label className="text-xs text-white/40 tracking-wide">Bank / Account</label>
+            <BankSelect
+              value={form.bank}
+              onChange={val => setForm(prev => ({ ...prev, bank: val }))}
             />
           </div>
 
@@ -120,32 +196,38 @@ export default function ExpenseForm({ categories, onAdd }) {
           </div>
         </div>
 
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-white/40 tracking-wide">
+            Description <span className="text-white/20">(optional)</span>
+          </label>
+          <input
+            type="text"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="e.g. Lunch, Uber"
+            className={inputClass}
+          />
+        </div>
+
         {error && <p className="text-red-400 text-xs">{error}</p>}
 
-        {/* Neon submit button */}
         <button
           type="submit"
           className="w-full flex items-center justify-center gap-3 rounded-xl px-4 py-3 transition-all backdrop-blur-sm"
           style={{
             background: 'rgba(0,0,0,0.55)',
             border: '2px solid rgba(255, 30, 30, 0.9)',
-            boxShadow:
-              '0 0 6px #ff1e1e, 0 0 18px #ff1e1e, 0 0 40px rgba(255,30,30,0.4), inset 0 0 12px rgba(255,30,30,0.08), 0 0 6px #1e90ff, 0 0 18px rgba(30,144,255,0.3)',
+            boxShadow: '0 0 6px #ff1e1e, 0 0 18px #ff1e1e, 0 0 40px rgba(255,30,30,0.4), inset 0 0 12px rgba(255,30,30,0.08), 0 0 6px #1e90ff, 0 0 18px rgba(30,144,255,0.3)',
           }}
         >
           <PlusCircle
             size={20}
-            style={{
-              color: '#1e90ff',
-              filter: 'drop-shadow(0 0 4px #1e90ff) drop-shadow(0 0 10px #1e90ff)',
-            }}
+            style={{ color: '#1e90ff', filter: 'drop-shadow(0 0 4px #1e90ff) drop-shadow(0 0 10px #1e90ff)' }}
           />
           <span
             className="font-bold tracking-widest uppercase text-sm"
-            style={{
-              color: '#ffe600',
-              textShadow: '0 0 4px #ffe600, 0 0 12px #ffe600, 0 0 24px #ffaa00, 0 0 48px #ff8800',
-            }}
+            style={{ color: '#ffe600', textShadow: '0 0 4px #ffe600, 0 0 12px #ffe600, 0 0 24px #ffaa00, 0 0 48px #ff8800' }}
           >
             Add Expense
           </span>

@@ -7,6 +7,7 @@ import FilterBar from './components/FilterBar'
 import NotesPanel from './components/NotesPanel'
 import PieChart from './components/PieChart'
 import ClockWidget from './components/ClockWidget'
+import TodayWidget from './components/TodayWidget'
 
 export const CATEGORIES = ['Food', 'Travel', 'Basic Needs', 'Pleasure']
 
@@ -58,9 +59,10 @@ export default function App() {
               <ExpenseForm categories={CATEGORIES} onAdd={addExpense} />
             </div>
 
-            {/* Right: Pie Chart — square, anchored to top */}
-            <div className="self-start">
+            {/* Right: Pie Chart + Today Widget */}
+            <div className="self-start space-y-4">
               <PieChart expenses={filtered} />
+              <TodayWidget expenses={expenses} />
             </div>
 
           </div>
